@@ -1,49 +1,251 @@
-# API Development and Documentation Final Project
+## API Reference
 
-## Trivia App
+## Trivia API
 
-Udacity is invested in creating bonding experiences for its employees and students. A bunch of team members got the idea to hold trivia on a regular basis and created a webpage to manage the trivia app and play the game, but their API experience is limited and still needs to be built out.
+#### Introduction
 
-That's where you come in! Help them finish the trivia app so they can start holding trivia and seeing who's the most knowledgeable of the bunch. The application must:
+The trivia api is a quiz Api with endpoints that can handle creation of questions and returning questions in a random order for quizzes. The APi was designed as a project for Udacity Backend development course. It runs on Flask's framework and it was designed following the [Pep-8 guidelines](https://peps.python.org/pep-0008/).
 
-1. Display questions - both all questions and by category. Questions should show the question, category and difficulty rating by default and can show/hide the answer.
-2. Delete questions.
-3. Add questions and require that they include question and answer text.
-4. Search for questions based on a text query string.
-5. Play the quiz game, randomizing either all questions or within a specific category.
+#### Getting Started
 
-Completing this trivia app will give you the ability to structure plan, implement, and test an API - skills essential for enabling your future applications to communicate with others.
+• Base-url : the project still runs locally as it is yet to be hosted. The base-url can be found at:
 
-## Starting and Submitting the Project
+`localhost:5000/`
 
-[Fork](https://help.github.com/en/articles/fork-a-repo) the project repository and [clone](https://help.github.com/en/articles/cloning-a-repository) your forked repository to your machine. Work on the project locally and make sure to push all your changes to the remote repository before submitting the link to your repository in the Classroom.
+•  Authentication: This version of the application is not designed to use any authentication or API keys.
 
-## About the Stack
+#### ERROR HANDLING
 
-We started the full stack application for you. It is designed with some key functional areas:
+Errors in the application are returned in JSON format, coupled with traditional http response codes
+Sample codes:
++2xx : This indicates that a request is successful, an example is the status code '200'.
++4xx: indicates that something is not right about the request.
 
-### Backend
+Expected Error codes and their meaning:
 
-The [backend](./backend/README.md) directory contains a partially completed Flask and SQLAlchemy server. You will work primarily in `__init__.py` to define your endpoints and can reference models.py for DB and SQLAlchemy setup. These are the files you'd want to edit in the backend:
+- 400 : This indicates that the request is either not properly formatted or there are some missing data
+- 406: The request is not acceptable
+- 422 : Cannot process a request
+- 404: The resource(question or category) is not found
 
-1. `backend/flaskr/__init__.py`
-2. `backend/test_flaskr.py`
+An error response example:
+This is what an error message would look like
 
-> View the [Backend README](./backend/README.md) for more details.
+```json
+{
+"Success" : False,
+"Error": "oops! 404 method not found"
+}
+```
 
-### Frontend
+### End Points:
 
-The [frontend](./frontend/README.md) directory contains a complete React frontend to consume the data from the Flask server. If you have prior experience building a frontend application, you should feel free to edit the endpoints as you see fit for the backend you design. If you do not have prior experience building a frontend application, you should read through the frontend code before starting and make notes regarding:
+#### GET
 
-1. What are the end points and HTTP methods the frontend is expecting to consume?
-2. How are the requests from the frontend formatted? Are they expecting certain parameters or payloads?
+###### `/categories`
 
-Pay special attention to what data the frontend is expecting from each API response to help guide how you format your API. The places where you may change the frontend behavior, and where you should be looking for the above information, are marked with `TODO`. These are the files you'd want to edit in the frontend:
+The categories endpoints returns all the categories available as a collection of quiz.
 
-1. `frontend/src/components/QuestionView.js`
-2. `frontend/src/components/FormView.js`
-3. `frontend/src/components/QuizView.js`
+##### Sample
 
-By making notes ahead of time, you will practice the core skill of being able to read and understand code and will have a simple plan to follow to build out the endpoints of your backend API.
+```javascript
+curl http://localhost:5000/categories
+```
 
-> View the [Frontend README](./frontend/README.md) for more details.
+The `response` will be formatted this way if successful:
+
+```json
+"categories": {
+"1" : "Science",
+"2" :"Art",
+ "3" : "Geography",
+"4" : "History",
+"5" : "Entertainment",
+"6" : "Sports"
+}
+```
+
+###### `/categories/{id}/questions`
+
+Handles the request to get questions based on a category.
+
+####Sample
+
+```javascript
+ curl http://localhost:5000/categories/2/questions
+```
+
+-Response
+
+```Json
+
+{
+"success": true,
+"current_category":{
+"6": "sports"
+},
+{
+"questions":[{
+"question": "Who won the last world cup?",
+"answer ": "France",
+"category": "6",
+"difficulty": "4"
+}, {
+"question": "Who won the last ballon d'or?",
+"answer": "Lionel Messi",
+"category": "6",
+"difficulty": "3"
+}]
+}
+```
+
+###### `/questions`
+
+This endpoint returns list of questions and their category, the total number of pages
+This endpoint is paginated to show 10 questions per page.
+
+#### Sample
+
+```javascript
+curl http://localhost:5000/questions
+```
+
+-Response:
+
+```json
+{
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "page": 1,
+  "questions": [
+    {
+      "answer": "Tom Cruise",
+      "category": 5,
+      "difficulty": 4,
+      "id": 4,
+      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+    },
+    {
+      "answer": "Maya Angelou",
+      "category": 4,
+      "difficulty": 2,
+      "id": 5,
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    },
+    {
+      "answer": "Muhammad Ali",
+      "category": 4,
+      "difficulty": 1,
+      "id": 9,
+      "question": "What boxer's original name is Cassius Clay?"
+    },
+    {
+      "answer": "The Palace of Versailles",
+      "category": 3,
+      "difficulty": 3,
+      "id": 14,
+      "question": "In which royal palace would you find the Hall of Mirrors?"
+    },
+    {
+      "answer": "Agra",
+      "category": 3,
+      "difficulty": 2,
+      "id": 15,
+      "question": "The Taj Mahal is located in which Indian city?"
+    }
+  ],
+  "success": true,
+  "total_questions": 22
+}
+```
+
+This endpoint also accepts a `page` parameter that indicates the `page` number and the total questions to display per `page` is 10, it also returns availabe categories.
+
+```javascript
+GET /questions?page=5
+```
+
+#### POST
+
+###### `/questions`
+
+This endpoint allows you to create and add questions to the application, it takes
+
+- questions
+- category
+- answer
+- difficulty
+  as its parameter.
+  They are all required to create a `POST` request to this endpoint.
+
+#### Sample
+
+```javascript
+curl -X POST -d '{"question": "Who won the last Uefa Champions league title?", "answer": "Real Madrid", "category": "6", "difficulty":"2"}' localhost:5000/questions -H "Content-Type: application/json"
+```
+
+-Response
+
+```json
+{
+  "success": true,
+  "added_question": 1
+}
+```
+
+##### `/questions/search`
+
+This endpoint is used to search for questions, which only takes the search term as parameter in the `POST` request body.
+
+```javascript
+curl localhost:5000/questions/search -X POST -d '{"search_term":"name"}'
+```
+
+##### `/quizzes`
+
+This endpoints returns questions for quizzes, the questions are randomly returned. It takes `previous_questions` and `quiz_category` as parameters.
+
+####Sample
+
+```javascript
+curl -X POST http://127.0.0.1:5000/quizzes -d '{"previous_questions": [5],"quiz_category": "2"}'
+```
+
+-Response
+Generated randomly.
+
+```json
+{
+  "current_category": "2",
+  "question": {
+    "answer": "One",
+    "category": 2,
+    "difficulty": 4,
+    "id": 18,
+    "question": "How many paintings did Van Gogh sell in his lifetime?"
+  },
+  "success": true
+}
+```
+
+#### DELETE
+
+This endpoint deletes or removes a question by providing an `id`. You can only delete a question with question`id` on this endpoint
+
+####Sample
+`curl -X DELETE http://localhost:5000/questions/6`
+
+-Response
+
+```Json
+{
+"deleted": 34,
+"success" : true
+}
+```

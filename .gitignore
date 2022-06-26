@@ -13,3 +13,6 @@ ehthumbs.db
 Thumbs.db
 env/
 frontend/node_modules/
+backend/__pycache__/
+
+.yarn.lock
