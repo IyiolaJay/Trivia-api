@@ -214,7 +214,7 @@ This endpoints returns questions for quizzes, the questions are randomly returne
 ####Sample
 
 ```javascript
-curl -X POST http://127.0.0.1:5000/quizzes -d '{"previous_questions": [5],"quiz_category": "2"}'
+curl -X POST http://127.0.0.1:5000/quizzes -d '{"previous_questions": [], "quiz_category": {"type": "click","id": "0" }}'
 ```
 
 -Response

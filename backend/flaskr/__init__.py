@@ -90,18 +90,7 @@ def create_app(test_config=None):
                 "categories": category_dict,
                 "page": page
             })
-    # """
-    # @TODO:
-    # Create an endpoint to handle GET requests for questions,
-    # including pagination (every 10 questions).
-    # This endpoint should return a list of questions,
-    # number of total questions, current category, categories.
 
-    # TEST: At this point, when you start the application
-    # you should see questions and categories generated,
-    # ten questions per page and pagination at the bottom of the screen for three pages.
-    # Clicking on the page numbers should update the questions.
-    # """
     
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
     def delete_question(question_id):
@@ -182,27 +171,7 @@ def create_app(test_config=None):
             #"current_category": search_questions.category
         })
 
-    # """
-    # @TODO:
-    # Create an endpoint to POST a new question,
-    # which will require the question and answer text,
-    # category, and difficulty score.
-
-    # TEST: When you submit a question on the "Add" tab,
-    # the form will clear and the question will appear at the end of the last page
-    # of the questions list in the "List" tab.
-    # """
-
-    # """
-    # @TODO:
-    # Create a POST endpoint to get questions based on a search term.
-    # It should return any questions for whom the search term
-    # is a substring of the question.
-
-    # TEST: Search by any phrase. The questions list will update to include
-    # only question that include that string within their question.
-    # Try using the word "title" to start.
-    # """
+        
     @app.route('/categories/<int:id>/questions', methods=['GET'])
     def get_by_category(id):
         questions = Question.query.filter(Question.category == id).all()
@@ -233,54 +202,30 @@ def create_app(test_config=None):
 
     @app.route('/quizzes', methods=['POST'])
     def play_quiz():
-        body = request.get_json()
-
-        if body is None:
-            abort(400)
-
+        
         try:
-            previous_questions = body["previous_questions"]
-            current_category = body["quiz_category"]
+            body = request.get_json()
 
-            if current_category == "all":
-                gotten_questions = Question.query.all()
-
-            else:
-                questions = Question.query.filter(Question.category == current_category).all()
-
-            gotten_questions = []
-            for question in questions:
-                if question.id not in previous_questions:
-                    gotten_questions.append(question.format())
-
-            #To check there are still questions left
-            if len(gotten_questions) == 0:
-                return jsonify({
-                    "success": True,
-                    "message": "no more questions",
-                    "question": False,
-                    "current_category": current_category
-                })
-
-            else:
-                if len(gotten_questions) == 1:
-                    question = gotten_questions[0]
+            current_category = body.get('quiz_category')
+            previous_question = body.get('previous_questions')
 
 
-                random_index = random.randint(0, (len(gotten_questions)-1))
 
-            question = gotten_questions[random_index]
+            if current_category['type'] == 'click':
+                gotten_questions = Question.query.filter(Question.id.notin_((previous_question))).all()
+
+            else: 
+                gotten_questions = Question.query.filter_by(category=current_category['id']
+                ).filter(Question.id.notin_((previous_question))).all()
+
+            questions = gotten_questions[random.randrange(0, len(gotten_questions))].format() if len(gotten_questions) > 0 else None
 
             return jsonify({
                 "success": True,
-                "question": question,
-                "current_category": current_category
+                "question": questions
             })
-
         except:
-            abort(406, "quiz not found")
-
-        
+            abort(422, "Quiz not found")
         
         
         

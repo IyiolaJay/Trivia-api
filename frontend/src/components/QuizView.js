@@ -34,8 +34,8 @@ class QuizView extends Component {
     });
   }
 
-  selectCategory = ({ id = "all" }) => {
-    this.setState({ quizCategory: id }, this.getNextQuestion);
+  selectCategory = ({ type, id = 0 }) => {
+    this.setState({ quizCategory: { type, id } }, this.getNextQuestion);
   };
 
   handleChange = (event) => {
